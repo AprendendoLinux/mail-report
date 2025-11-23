@@ -9,20 +9,22 @@ services:
     image: aprendendolinux/exim-relay:latest
     container_name: smtp-relay
     hostname: smtp-relay
+    networks:
+      - smtp-network
     environment:
-      - SMTP_SERVER=smtp-relay.gmail.com  # Deixe vazio para envio direto ou especifique relay (ex.: smtp-relay.gmail.com)
-      - SMTP_PORT=587  # Porta do servidor SMTP (25 para envio direto, 587 para TLS/STARTTLS, 465 para SSL)
-      - SMTP_USERNAME=[your-username]  # Usuário para autenticação SMTP (opcional para envio direto, ex.: seu email)
-      - SMTP_PASSWORD=[your-password]  # Senha para autenticação SMTP (opcional para envio direto, use app password para Gmail com 2FA)
-      - SERVER_HOSTNAME=[your-hostname]  # Nome do host do servidor (FQDN usado para qualificação de domínio no Exim)
-      - TZ=America/Sao_Paulo  # Fuso horário do contêiner (ex.: America/Sao_Paulo para horário de Brasília)
-      - DECODE_SUBJECT=yes  # Ativa decodificação de assuntos nos logs (yes/no)
-      - DECODE_DEBUG=yes  # Ativa modo debug no decode_log.py (yes/no, exibe detalhes de decodificação)
-      - RELAY_NETS=0.0.0.0/0  # Redes permitidas para relay (ex.: 172.16.0.0/12;192.168.0.0/16 para redes específicas; 0.0.0.0/0 para qualquer origem)
-      - ALLOWED_SENDER_DOMAINS=  # Domínios de remetentes permitidos (opcional para relay autenticado, espaço-separados)
-      - DKIM_SELECTOR=mail  # Selector DKIM (opcional para relay autenticado, padrão: mail)
-      - DKIM_AUTOGENERATE=no  # Gera chaves DKIM automáticas se não existirem (opcional para relay autenticado, yes/no)
-      - EXIM_INET_PROTOCOLS=all  # Protocolo de rede: ipv4 ou all (opcional para relay autenticado)
+      SMTP_SERVER: 'smtp-relay.gmail.com'  # Deixe vazio para envio direto ou especifique relay (ex.: smtp-relay.gmail.com)
+      SMTP_PORT: '587'  # Porta do servidor SMTP (25 para envio direto, 587 para TLS/STARTTLS, 465 para SSL)
+      smtplogsNAME: 'your-username'  # Usuário para autenticação SMTP (opcional para envio direto, ex.: seu email)
+      SMTP_PASSWORD: 'your-password'  # Senha para autenticação SMTP (opcional para envio direto, use app password para Gmail com 2FA)
+      SERVER_HOSTNAME: 'your-hostname'  # Nome do host do servidor (FQDN usado para qualificação de domínio no Exim)
+      TZ: 'America/Sao_Paulo'  # Fuso horário do contêiner (ex.: America/Sao_Paulo para horário de Brasília)
+      DECODE_SUBJECT: 'yes'  # Ativa decodificação de assuntos nos logs (yes/no)
+      DECODE_DEBUG: 'yes'  # Ativa modo debug no decode_log.py (yes/no, exibe detalhes de decodificação)
+      RELAY_NETS: '0.0.0.0/0'  # Redes permitidas para relay (ex.: 172.16.0.0/12;192.168.0.0/16 para redes específicas; 0.0.0.0/0 para qualquer origem)
+      ALLOWED_SENDER_DOMAINS:   # Domínios de remetentes permitidos (opcional para relay autenticado, espaço-separados)
+      DKIM_SELECTOR: 'mail'  # Selector DKIM (opcional para relay autenticado, padrão: mail)
+      DKIM_AUTOGENERATE: 'no'  # Gera chaves DKIM automáticas se não existirem (opcional para relay autenticado, yes/no)
+      EXIM_INET_PROTOCOLS: 'all'  # Protocolo de rede: ipv4 ou all (opcional para relay autenticado)
     volumes:
       - /srv/exim/logs:/var/log/exim4  # Monta diretório local para persistir logs (ex.: ./logs:/var/log/exim4)
       - /srv/postfixdkim:/etc/opendkim/keys  # Monta diretório para chaves DKIM (similar ao postfix)
@@ -35,74 +37,78 @@ services:
     restart: always
     container_name: smtp-relay-db
     hostname: smtp-relay-db
+    networks:
+      - smtp-network
     environment:
-      # MYSQL_ROOT_PASSWORD: Senha root (ex.: senha_complexa).
-      MYSQL_ROOT_PASSWORD: 'xxxxxxxxxxxxxxxx'
-      # MYSQL_DATABASE: Nome do banco (ex.: smtp_cpd).
-      MYSQL_DATABASE: smtp_cpd
-      # MYSQL_USER: Usuário MySQL (ex.: smtp_user).
-      MYSQL_USER: smtp_user
-      # MYSQL_PASSWORD: Senha do usuário (ex.: senha_complexa).
-      MYSQL_PASSWORD: 'xxxxxxxxxxxxxxxx'
+      ##### MYSQL_ROOT_PASSWORD: Senha root (ex.: senha_complexa).
+      MYSQL_ROOT_PASSWORD: 'you-password'
+      ##### MYSQL_DATABASE: Nome do banco (ex.: smtplogs).
+      MYSQL_DATABASE: smtplogs
+      ##### MYSQL_USER: Usuário MySQL (ex.: smtplogs).
+      MYSQL_USER: smtplogs
+      ##### MYSQL_PASSWORD: Senha do usuário (ex.: senha_complexa).
+      MYSQL_PASSWORD: 'you-password'
     volumes:
       - /srv/mysql:/var/lib/mysql
     ports:
       - 3306:3306
 
-  smtp-relay:
+  smtp-relay-app:
     image: aprendendolinux/mail-report:latest
     restart: always
-    container_name: app
-    hostname: app
+    container_name: smtp-relay-app
+    hostname: smtp-relay-app
+    networks:
+      - smtp-network
     environment:
-      # DB_HOST: Host do banco (ex.: smtp-relay-db, 192.168.1.100).
-      - DB_HOST=smtp-relay-db
-      # DB_USER: Usuário MySQL (ex.: smtp_user, root).
-      - DB_USER=smtp_user
-      # DB_PASSWORD: Senha do usuário (ex.: senha_complexa).
-      - DB_PASSWORD='xxxxxxxxxxxxxxxx'
-      # DB_NAME: Nome do banco (ex.: smtp_cpd).
-      - DB_NAME=smtp_cpd
-      # LOG_DIR: Diretório de logs (ex.: /app/logs).
-      - LOG_DIR=/app/logs
-      # TZ: Fuso horário (ex.: America/Sao_Paulo).
-      - TZ=America/Sao_Paulo
-      # AUTH_MODE: Modo de autenticação (AD, DB). Se DB, obrigatório configurar servidor SMTP para recuperação de senha.
-      - AUTH_MODE=DB
-      # LDAP_HOST: Servidor LDAP (ex.: 192.168.1.100). Usado se AUTH_MODE=AD.
-      # - LDAP_HOST=192.168.1.100
-      # LDAP_DOMAIN: Domínio AD (ex.: @example.com). Usado se AUTH_MODE=AD.
-      # - LDAP_DOMAIN=@example.com
-      # LDAP_BASE_DN: Base DN (ex.: DC=example,DC=com). Usado se AUTH_MODE=AD.
-      # - LDAP_BASE_DN=DC=example,DC=com
-      # LDAP_GROUP_DN: Grupo DN (ex.: CN=Users,DC=example,DC=com). Usado se AUTH_MODE=AD.
-      # - LDAP_GROUP_DN=CN=Users,DC=example,DC=com
-      # SCHEDULE_TYPE: Agendamento (minutes, time).
-      - SCHEDULE_TYPE=minutes
-      # SCHEDULE_INTERVAL_MINUTES: Intervalo em minutos (ex.: 2). Usado se SCHEDULE_TYPE=minutes.
-      - SCHEDULE_INTERVAL_MINUTES=2
-      # SCHEDULE_TIME: Horário fixo (ex.: 16:40). Usado se SCHEDULE_TYPE=time.
-      # - SCHEDULE_TIME=16:40
-      # DB_PORT: Porta MySQL (ex.: 3306, 3307). Padrão: 3306.
-      # - DB_PORT=3306
-      # SMTP_SERVER: Servidor SMTP para recuperação de senha (ex.: smtp-relay, smtp-relay.gmail.com). Usado se AUTH_MODE=DB.
-      - SMTP_SERVER=smtp-relay
-      # SMTP_PORT: Porta SMTP (25 não seguro, 587 STARTTLS, 465 SSL). Usado se AUTH_MODE=DB.
-      - SMTP_PORT=25
-      # SMTP_USERNAME: Usuário SMTP (ex.: user@example.com). Usado se AUTH_MODE=DB e SMTP_AUTHENTICATED=True.
-      # - SMTP_USERNAME=user@example.com
-      # SMTP_PASSWORD: Senha SMTP (ex.: xxxxxxxxxxxxxxxx). Usado se AUTH_MODE=DB e SMTP_AUTHENTICATED=True.
-      # - SMTP_PASSWORD=xxxxxxxxxxxxxxxx
-      # SMTP_FROM: E-mail remetente (ex.: noreply@example.com). Usado se AUTH_MODE=DB.
-      - SMTP_FROM=noreply@example.com
-      # SMTP_FROM_NAME: Nome remetente (ex.: Sistema de Relatórios). Usado se AUTH_MODE=DB.
-      - SMTP_FROM_NAME='Sistema de Relatórios'
-      # SMTP_USE_TLS: Ativa TLS (True, False). Usado se AUTH_MODE=DB e SMTP_AUTHENTICATED=True.
-      # - SMTP_USE_TLS=True
-      # SMTP_USE_SSL: Ativa SSL (True, False). Usado se AUTH_MODE=DB e SMTP_AUTHENTICATED=True.
-      # - SMTP_USE_SSL=False
-      # SMTP_AUTHENTICATED: Requer autenticação SMTP (True, False). Usado se AUTH_MODE=DB.
-      - SMTP_AUTHENTICATED=False
+      ##### DB_HOST: Host do banco (ex.: smtp-relay-db, 192.168.1.100).
+      DB_HOST: 'smtp-relay-db'
+      ##### DB_USER: Usuário MySQL (ex.: smtplogs, root).
+      DB_USER: 'smtplogs'
+      ##### DB_PASSWORD: Senha do usuário (ex.: senha_complexa).
+      DB_PASSWORD: 'you-password'
+      ##### DB_NAME: Nome do banco (ex.: smtplogs).
+      DB_NAME: 'smtplogs'
+      ##### LOG_DIR: Diretório de logs (ex.: /app/logs).
+      LOG_DIR: '/app/logs'
+      ##### TZ: Fuso horário (ex.: America/Sao_Paulo).
+      TZ: 'America/Sao_Paulo'
+      ##### AUTH_MODE: Modo de autenticação (AD, DB). Se DB, obrigatório configurar servidor SMTP para recuperação de senha.
+      AUTH_MODE: 'DB'
+      ##### LDAP_HOST: Servidor LDAP (ex.: 192.168.1.100). Usado se AUTH_MODE=AD.
+      # LDAP_HOST: '192.168.1.100'
+      ##### LDAP_DOMAIN: Domínio AD (ex.: @example.com). Usado se AUTH_MODE=AD.
+      # LDAP_DOMAIN: '@example.com'
+      ##### LDAP_BASE_DN: Base DN (ex.: DC=example,DC=com). Usado se AUTH_MODE=AD.
+      # LDAP_BASE_DN: 'DC=example,DC=com'
+      ##### LDAP_GROUP_DN: Grupo DN (ex.: CN=Users,DC=example,DC=com). Usado se AUTH_MODE=AD.
+      # LDAP_GROUP_DN: 'CN=Users,DC=example,DC=com'
+      ##### SCHEDULE_TYPE: Agendamento (minutes, time).
+      SCHEDULE_TYPE: 'minutes'
+      ##### SCHEDULE_INTERVAL_MINUTES: Intervalo em minutos (ex.: 2). Usado se SCHEDULE_TYPE: minutes.
+      SCHEDULE_INTERVAL_MINUTES: '2'
+      ##### SCHEDULE_TIME: Horário fixo (ex.: 16:40). Usado se SCHEDULE_TYPE: time.
+      # SCHEDULE_TIME: '16:40'
+      ##### DB_PORT: Porta MySQL (ex.: 3306, 3307). Padrão: 3306.
+      # DB_PORT: '3306'
+      ##### SMTP_SERVER: Servidor SMTP para recuperação de senha (ex.: smtp-relay, smtp-relay.gmail.com). Usado se AUTH_MODE: DB.
+      SMTP_SERVER: 'smtp-relay'
+      ##### SMTP_PORT: Porta SMTP (25 não seguro, 587 STARTTLS, 465 SSL). Usado se AUTH_MODE: DB.
+      SMTP_PORT: '25'
+      ##### SMTP_USERNAME: Usuário SMTP (ex.: user@example.com). Usado se AUTH_MODE: DB e SMTP_AUTHENTICATED: True.
+      # SMTP_USERNAME: 'user@example.com'
+      ##### SMTP_PASSWORD: Senha SMTP (ex.: you-password). Usado se AUTH_MODE: DB e SMTP_AUTHENTICATED: True.
+      # SMTP_PASSWORD: 'you-password'
+      ##### SMTP_FROM: E-mail remetente (ex.: noreply@example.com). Usado se AUTH_MODE: DB.
+      SMTP_FROM: 'noreply@example.com'
+      ##### SMTP_FROM_NAME: Nome remetente (ex.: Sistema de Relatórios). Usado se AUTH_MODE: DB.
+      SMTP_FROM_NAME: 'Sistema de Relatórios'
+      ##### SMTP_USE_TLS: Ativa TLS (True, False). Usado se AUTH_MODE: DB e SMTP_AUTHENTICATED: True.
+      # SMTP_USE_TLS: 'True'
+      ##### SMTP_USE_SSL: Ativa SSL (True, False). Usado se AUTH_MODE: DB e SMTP_AUTHENTICATED: True.
+      # SMTP_USE_SSL: 'False'
+      ##### SMTP_AUTHENTICATED: Requer autenticação SMTP (True, False). Usado se AUTH_MODE: DB.
+      SMTP_AUTHENTICATED: 'False'
     volumes:
       - /srv/smtp-relay/logs:/app/logs
     ports:
@@ -112,6 +118,6 @@ services:
       - smtp-relay-db
 
 networks:
-  default:
+  smtp-network:
     driver: bridge
     name: smtp-network
