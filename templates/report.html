@@ -347,6 +347,34 @@
                 font-size: 12px;
             }
         }
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body {
+            min-height: 100vh;          /* Garante altura mínima total da tela */
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;                    /* Faz o main crescer e empurrar o footer para baixo */
+            margin: 30px auto 0 auto;   /* Remove o margin-bottom que estava criando espaço extra */
+        }
+
+        footer {
+            background: linear-gradient(135deg, #131212ff, #3d3939ff);
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;           /* altura idêntica */
+            font-size: 14px;
+            width: 100%;
+            margin: 0;
+            box-sizing: border-box;    /* ← ESSA LINHA ESTAVA FALTANDO */
+        }
     </style>
 </head>
 <body>
@@ -476,11 +504,7 @@
         {% endif %}
     </main>
 
-    <footer>
-        <a href="https://www.henrique.tec.br" target="_blank" style="color: inherit; text-decoration: none;">
-            Desenvolvido por Henrique Fagundes - Todos os direitos reservados
-        </a>
-    </footer>
+    {% include 'footer.html' %}
 
 <script>
     const modal = document.getElementById('infoModal');
