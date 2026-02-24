@@ -10,7 +10,6 @@
         .content-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .container { background: #FFFFFF; padding: 40px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); width: 100%; max-width: 420px; text-align: center; box-sizing: border-box; }
         
-        /* Nova classe exclusiva para o logo do login */
         .login-logo { 
             height: 80px; 
             width: auto;
@@ -29,11 +28,14 @@
         .password-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
         .password-wrapper input { width: 100%; padding: 14px 45px 14px 14px; border: 1px solid #E0E0E0; border-radius: 8px; font-size: 15px; background-color: #fafafa; transition: all 0.3s; box-sizing: border-box; }
         .password-wrapper input:focus { border-color: #3d3939; background-color: #fff; outline: none; box-shadow: 0 0 0 3px rgba(19, 18, 18, 0.1); }
-        .toggle-password { position: absolute; right: 12px; background: transparent; border: none; color: #666; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; }
-        .toggle-password:hover { color: #131212; }
         
-        button { background: #131212; color: #fff; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        button:hover { background: #3d3939; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+        /* Limpeza e blindagem de estilo para o olhinho */
+        .toggle-password { position: absolute; right: 12px; background: transparent !important; border: none !important; color: #666; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; box-shadow: none !important; width: auto; flex: none; }
+        .toggle-password:hover { color: #131212; transform: none !important; background: transparent !important; }
+        
+        /* O estilo visual foca APENAS no botão de submit */
+        button[type="submit"] { background: #131212; color: #fff; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        button[type="submit"]:hover { background: #3d3939; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
         
         .flash-message { color: #d9534f; background: #fdf7f7; padding: 12px; border-radius: 6px; border: 1px solid #f2dede; margin-bottom: 20px; font-size: 14px; text-align: center;}
         .forgot-link { display: inline-block; margin-top: 20px; color: #3d3939; text-decoration: none; font-size: 14px; transition: color 0.3s; text-align: center; }
