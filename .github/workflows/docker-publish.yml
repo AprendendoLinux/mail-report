@@ -7,7 +7,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  # NOME EM MINÚSCULO OBRIGATÓRIO (Evita erro do Docker)
   IMAGE_NAME: aprendendolinux/mail-report
 
 jobs:
@@ -38,17 +37,8 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=dev-latest,enable=${{ github.ref == 'refs/heads/dev' }}
-            
-            # --- CORREÇÃO AQUI ---
-            # O 'latest' agora só é gerado se for uma TAG de versão (ex: v1.0.6)
-            # Isso impede que um push simples na main sobrescreva o latest oficial
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-            # ---------------------
-
             type=ref,event=tag
             type=sha,format=short
-
-      # --- CÁLCULO INTELIGENTE DA VERSÃO ---
       - name: Definir Versão (Tag ou Hash)
         id: prep
         run: |
@@ -88,17 +78,14 @@ jobs:
           build-args: |
             APP_VERSION=${{ steps.prep.outputs.VERSION }}
 
-      # --- WEBHOOKS DO PORTAINER ---
       - name: Atualizar Portainer (Produção)
-        # Roda se for uma TAG de versão (pois é ela que atualiza o 'latest')
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
           echo "🚀 Nova Tag Detectada: Disparando webhook de Produção..."
           curl -k -X POST "${{ secrets.PORTAINER_WEBHOOK_PROD }}"
           
-    #   - name: Atualizar Portainer (Dev)
-    #     # Só roda se o push for na branch DEV
-    #     if: github.ref == 'refs/heads/dev'
-    #     run: |
-    #       echo "🧪 Branch Dev: Disparando webhook de Desenvolvimento..."
-    #       curl -k -X POST "${{ secrets.PORTAINER_WEBHOOK_DEV }}"
+      # - name: Atualizar Portainer (Dev)
+      #   if: github.ref == 'refs/heads/dev'
+      #   run: |
+      #     echo "🧪 Branch Dev: Disparando webhook de Desenvolvimento..."
+      #     curl -k -X POST "${{ secrets.PORTAINER_WEBHOOK_DEV }}"
