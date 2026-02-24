@@ -1,5 +1,9 @@
 FROM python:3.12-slim
 
+# Recebe a versão no build do GitHub Actions
+ARG APP_VERSION=dev-local
+ENV APP_VERSION=${APP_VERSION}
+
 WORKDIR /app
 
 # Instalar dependências (inclui werkzeug para hash de senhas)

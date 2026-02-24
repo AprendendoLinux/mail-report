@@ -13,45 +13,76 @@
         }
         .container {
             max-width: 1200px;
-            margin: 30px auto;
-            padding: 20px;
+            margin: 40px auto;
+            padding: 30px;
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
         h2 {
-            color: #1A3C5E;
+            color: #131212;
+            margin-top: 0;
+            font-weight: 500;
+            margin-bottom: 25px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px;
+            border-radius: 8px;
+            overflow: hidden; /* Mantém os cantos arredondados do header color */
         }
         th, td {
-            padding: 12px;
-            border: 1px solid #E0E0E0;
+            padding: 15px;
+            border-bottom: 1px solid #E0E0E0;
             text-align: left;
         }
         th {
-            background: #333333;
+            background: #131212;
             color: #fff;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        tr:hover {
+            background: #FAFAFA;
         }
         .actions a {
-            margin-right: 10px;
-            color: #131212ff;
+            margin-right: 15px;
+            color: #131212;
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .actions a:hover {
+            color: #666;
         }
         .create-btn {
-            background: #333333;
+            background: #131212;
             color: #fff;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 12px 20px;
+            border-radius: 8px;
             text-decoration: none;
             display: inline-block;
             margin-bottom: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .create-btn:hover {
+            background: #3d3939;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
         .flash {
-            color: #131212ff;
-            margin-bottom: 15px;
+            color: #d9534f;
+            background: #fdf7f7;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #f2dede;
+            margin-bottom: 20px;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -93,5 +124,6 @@
             </tbody>
         </table>
     </div>
+    {% include 'footer.html' %}
 </body>
 </html>

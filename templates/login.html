@@ -7,9 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-red: #131212ff;
-            --secondary-red: #3d3939ff;
-            --navy-blue: #131212ff;
+            --primary-dark: #131212;
+            --secondary-dark: #3d3939;
             --light-gray: #F5F5F5;
             --medium-gray: #E0E0E0;
             --dark-gray: #333333;
@@ -17,7 +16,7 @@
         }
         body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, var(--light-gray), var(--white));
+            background: linear-gradient(135deg, #e8e8e8, var(--light-gray));
             color: var(--dark-gray);
             margin: 0;
             padding: 0;
@@ -28,59 +27,86 @@
         }
         .login-container {
             background: var(--white);
-            padding: 40px;
+            padding: 50px 40px;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             text-align: center;
+            position: relative;
         }
         .logo {
-            height: 80px;
-            margin-bottom: 20px;
+            height: 90px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+        }
+        .logo:hover {
+            transform: scale(1.05);
         }
         h2 {
-            color: var(--navy-blue);
-            margin-bottom: 20px;
+            color: var(--primary-dark);
+            margin-bottom: 25px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
         form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 18px;
         }
         input {
-            padding: 12px;
+            padding: 14px;
             border: 1px solid var(--medium-gray);
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #fafafa;
         }
         input:focus {
-            border-color: var(--primary-red);
+            border-color: var(--secondary-dark);
+            background-color: var(--white);
             outline: none;
+            box-shadow: 0 0 0 3px rgba(19, 18, 18, 0.1);
         }
         button {
-            background: var(--primary-red);
+            background: var(--primary-dark);
             color: var(--white);
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         button:hover {
-            background: var(--secondary-red);
+            background: var(--secondary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
         }
         .flash-message {
-            color: var(--primary-red);
-            margin-bottom: 15px;
+            color: #d9534f;
+            background: #fdf7f7;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #f2dede;
+            margin-bottom: 20px;
+            font-size: 14px;
         }
-        footer {
-            position: absolute;
-            bottom: 10px;
-            color: var(--dark-gray);
-            font-size: 12px;
+        .forgot-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--secondary-dark);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
         }
+        .forgot-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        /* O rodapé agora é fixado globalmente via footer.html e não quebra com scroll */
     </style>
 </head>
 <body>
@@ -100,7 +126,7 @@
             <button type="submit">Entrar</button>
         </form>
         {% if auth_mode == 'DB' %}
-        <a href="{{ url_for('forgot_password') }}" style="display: block; margin-top: 10px; color: var(--primary-red);">Recuperar senha</a>
+        <a href="{{ url_for('forgot_password') }}" class="forgot-link">Recuperar senha</a>
         {% endif %}
     </div>
     {% include 'footer.html' %}

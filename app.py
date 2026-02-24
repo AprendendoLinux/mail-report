@@ -20,6 +20,10 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'super_secret_key')
 
+@app.context_processor
+def inject_version():
+    return dict(app_version=os.environ.get('APP_VERSION', 'dev-local'))
+
 # Configuração de variáveis de ambiente
 try:
     env_vars = validate_environment_variables()
