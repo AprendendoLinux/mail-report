@@ -11,9 +11,13 @@
         header {
             background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
             color: var(--white);
-            padding: 20px 0;
+            height: 100px; 
+            box-sizing: border-box; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             position: relative;
+            display: flex;
+            align-items: center; 
+            width: 100%;
         }
         .header-content {
             display: flex;
@@ -23,33 +27,56 @@
             margin: 0 auto;
             padding: 0 20px;
             width: 100%;
+            height: 100%;
         }
+        
+        /* Ajuste: flex: 1 1 0% garante que os lados ocupem EXATAMENTE o mesmo espaço */
         .logo-container {
             display: flex;
             align-items: center;
+            justify-content: flex-start;
+            flex: 1 1 0%; 
+            gap: 15px; 
         }
-        .logo {
+        .logo-container a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        /* Nova classe exclusiva para o logo do topo */
+        .header-logo {
             height: 60px;
             width: auto;
             display: block;
             transition: transform 0.3s ease;
         }
-        .logo:hover {
+        .header-logo:hover {
             transform: scale(1.05);
         }
+        
         .elegant-text {
             font-family: 'Great Vibes', cursive; 
-            font-size: 24px;
+            font-size: 26px; 
             color: #FFFFFF;
-            vertical-align: middle;
+            margin: 0;
             padding: 0;
-            margin: 0 0 0 15px;
+            line-height: 1; 
         }
         .title {
             font-size: 1.8em;
             font-weight: 500;
             margin: 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            text-align: center;
+            white-space: nowrap; 
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1 1 0%; 
+            gap: 10px;
         }
         .logout-btn, .import-btn {
             background: var(--dark-gray);
@@ -60,7 +87,6 @@
             font-size: 14px;
             font-weight: 500;
             transition: all 0.3s ease;
-            margin-left: 10px;
             border: 1px solid #444;
         }
         .logout-btn:hover, .import-btn:hover {
@@ -69,11 +95,19 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             transform: translateY(-2px);
         }
+        
         @media (max-width: 768px) {
+            header {
+                height: auto;
+                min-height: 100px;
+                padding: 15px 0;
+            }
             .header-content {
                 flex-direction: column;
                 gap: 15px;
-                text-align: center;
+            }
+            .title {
+                white-space: normal;
             }
         }
     </style>
@@ -83,21 +117,25 @@
         <div class="header-content">
             <div class="logo-container">
                 <a href="/">
-                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="header-logo">
                 </a>
-                <a href="/" class="elegant-text" style="text-decoration: none;">MAIL REPORT</a>
+                <a href="/" class="elegant-text">MAIL REPORT</a>
             </div>
+            
             <h1 class="title">Relatório de E-mails Enviados/Falhados</h1>
-            <div>
-                {% if auth_mode == 'DB' %}
-                {% if session.get('is_admin') %}
-                <a href="{{ url_for('manage') }}" class="logout-btn">Gerenciar</a>
-                {% else %}
-                <a href="{{ url_for('change_password') }}" class="logout-btn">Alterar Senha</a>
+            
+            <div class="header-actions">
+                {% if session.get('logged_in') %}
+                    {% if auth_mode == 'DB' %}
+                        {% if session.get('is_admin') %}
+                        <a href="{{ url_for('manage') }}" class="logout-btn">Gerenciar</a>
+                        {% else %}
+                        <a href="{{ url_for('change_password') }}" class="logout-btn">Alterar Senha</a>
+                        {% endif %}
+                    {% endif %}
+                    <a href="{{ url_for('import_emails') }}" class="import-btn">Importar</a>
+                    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
                 {% endif %}
-                {% endif %}
-                <a href="{{ url_for('import_emails') }}" class="import-btn">Importar</a>
-                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
             </div>
         </div>
     </header>
