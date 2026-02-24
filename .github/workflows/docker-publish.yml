@@ -42,27 +42,22 @@ jobs:
       - name: Definir Versão (Tag ou Hash)
         id: prep
         run: |
-          # Pega os 7 primeiros dígitos do Hash do commit
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           
           if [[ $GITHUB_REF == refs/tags/* ]]; then
-            # CENÁRIO 1: É uma TAG (Produção) -> Usa o nome limpo (ex: v1.0.6)
             VERSION=${GITHUB_REF#refs/tags/}
             echo "Modo: TAG DE PRODUÇÃO"
             
           elif [[ $GITHUB_REF == refs/heads/dev ]]; then
-            # CENÁRIO 2: É a DEV -> Usa 'dev-' + Hash (ex: dev-a1b2c3d)
             VERSION="dev-${SHORT_SHA}"
             echo "Modo: DESENVOLVIMENTO (HASH)"
             
           else
-            # CENÁRIO 3: Main sem tag (Fallback) -> Usa 'latest-' + Hash
             VERSION="latest-${SHORT_SHA}"
             echo "Modo: MAIN (LATEST)"
           fi
           
           echo "Versão Calculada: $VERSION"
-          # Salva na variável de saída para o próximo passo usar
           echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Build e Push
@@ -74,7 +69,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          # --- INJETA A VERSÃO NO DOCKERFILE ---
           build-args: |
             APP_VERSION=${{ steps.prep.outputs.VERSION }}
 
