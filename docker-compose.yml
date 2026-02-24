@@ -54,7 +54,7 @@ services:
       - 3306:3306
 
   smtp-relay-app:
-    image: aprendendolinux/mail-report:latest
+    image: ghcr.io/aprendendolinux/mail-report:latest
     restart: always
     container_name: smtp-relay-app
     hostname: smtp-relay-app
