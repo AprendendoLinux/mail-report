@@ -1,8 +1,5 @@
 <style>
     .global-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
         width: 100%;
         background: linear-gradient(135deg, #131212, #272626);
         color: #FFFFFF;
@@ -12,12 +9,13 @@
         box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
         z-index: 1000;
         letter-spacing: 0.5px;
-        /* Alinhamento igual ao test-ipv6 */
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 15px;
         height: 45px;
+        /* A MÁGICA AQUI: Se a página for curta, isso empurra o footer pro final */
+        margin-top: auto; 
     }
     .global-footer a {
         color: inherit;
@@ -46,16 +44,8 @@
         align-items: center;
         gap: 5px;
     }
-    body {
-        padding-bottom: 70px !important; 
-    }
     @media print {
-        .global-footer {
-            display: none !important;
-        }
-        body {
-            padding-bottom: 0 !important;
-        }
+        .global-footer { display: none !important; }
     }
     @media (max-width: 768px) {
         .global-footer { 

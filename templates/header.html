@@ -8,16 +8,26 @@
             --dark-gray: #272626;
             --white: #FFFFFF;
         }
+        
+        /* GARANTIA GLOBAL: Torna o corpo inteiro amigável para o rodapé */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+        
         header {
             background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
             color: var(--white);
-            height: 100px; 
+            min-height: 100px; /* Mudado de height fixo para min-height */
             box-sizing: border-box; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             position: relative;
             display: flex;
             align-items: center; 
             width: 100%;
+            flex-shrink: 0;
         }
         .header-content {
             display: flex;
@@ -25,17 +35,18 @@
             justify-content: space-between;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 10px 20px;
             width: 100%;
-            height: 100%;
+            min-height: 100%;
+            flex-wrap: wrap; /* Impede elementos de esmagarem uns aos outros */
+            gap: 15px;
         }
         
-        /* Ajuste: flex: 1 1 0% garante que os lados ocupem EXATAMENTE o mesmo espaço */
         .logo-container {
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            flex: 1 1 0%; 
+            flex: 1 1 auto; 
             gap: 15px; 
         }
         .logo-container a {
@@ -44,7 +55,6 @@
             text-decoration: none;
         }
         
-        /* Nova classe exclusiva para o logo do topo */
         .header-logo {
             height: 60px;
             width: auto;
@@ -56,7 +66,7 @@
         }
         
         .elegant-text {
-            font-family: 'Great Vibes', cursive; 
+            font-family: 'Great Vibes', cursive, 'Times New Roman', serif; 
             font-size: 26px; 
             color: #FFFFFF;
             margin: 0;
@@ -64,19 +74,21 @@
             line-height: 1; 
         }
         .title {
-            font-size: 1.8em;
+            font-size: 1.6em; /* Um pouco menor para respirar bem em tablets */
             font-weight: 500;
             margin: 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             text-align: center;
+            flex: 1 1 auto;
             white-space: nowrap; 
         }
         .header-actions {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            flex: 1 1 0%; 
+            flex: 1 1 auto; 
             gap: 10px;
+            flex-wrap: wrap; /* RESOLVE OS BOTÕES TREPADOS! Agora eles descem se faltar espaço. */
         }
         .logout-btn, .import-btn {
             background: var(--dark-gray);
@@ -88,6 +100,7 @@
             font-weight: 500;
             transition: all 0.3s ease;
             border: 1px solid #444;
+            white-space: nowrap; /* Evita que o texto do botão quebre no meio */
         }
         .logout-btn:hover, .import-btn:hover {
             background: #4a4a4a;
@@ -96,18 +109,33 @@
             transform: translateY(-2px);
         }
         
+        @media (max-width: 900px) {
+            .title {
+                white-space: normal;
+            }
+        }
+        
         @media (max-width: 768px) {
             header {
-                height: auto;
-                min-height: 100px;
                 padding: 15px 0;
             }
             .header-content {
                 flex-direction: column;
+                justify-content: center;
                 gap: 15px;
             }
+            .logo-container {
+                justify-content: center;
+                width: 100%;
+            }
             .title {
-                white-space: normal;
+                font-size: 1.4em;
+                text-align: center;
+                width: 100%;
+            }
+            .header-actions {
+                justify-content: center;
+                width: 100%;
             }
         }
     </style>

@@ -14,6 +14,7 @@
             --dark-gray: #333333;
             --white: #FFFFFF;
         }
+        html { overflow-y: scroll; }
         body {
             font-family: 'Roboto', sans-serif;
             background-color: var(--light-gray);
@@ -23,6 +24,7 @@
             line-height: 1.6;
         }
         main {
+            width: 95%;
             max-width: 1200px;
             margin: 40px auto;
             padding: 0; 
@@ -30,6 +32,7 @@
             border-radius: 12px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.1);
             overflow: hidden;
+            box-sizing: border-box;
         }
         .filters {
             background: #ffffff;
